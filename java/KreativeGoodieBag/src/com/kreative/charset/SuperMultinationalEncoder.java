@@ -1,0 +1,186 @@
+package com.kreative.charset;
+
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CoderResult;
+
+public class SuperMultinationalEncoder extends CharsetEncoder {
+	private final boolean overrideC0;
+	
+	protected SuperMultinationalEncoder(Charset cs, boolean overrideC0) {
+		super(cs, 1, 1);
+		this.overrideC0 = overrideC0;
+	}
+	
+	protected CoderResult encodeLoop(CharBuffer in, ByteBuffer out) {
+		while (in.hasRemaining()) {
+			if (!out.hasRemaining()) return CoderResult.OVERFLOW;
+			int ch = in.get() & 0xFFFF;
+			if (ch < 0x80) out.put((byte)ch);
+			else if (ch < 0xA0) return unmappable(in);
+			else switch (ch) {
+			case 0x00a0: out.put((byte)0x80); break;
+			case 0x00a1: out.put((byte)0xa1); break;
+			case 0x00a2: out.put((byte)0xa2); break;
+			case 0x00a3: out.put((byte)0xa3); break;
+			case 0x00a4: out.put((byte)0xa8); break;
+			case 0x00a5: out.put((byte)0xa5); break;
+			case 0x00a6: out.put((byte)0xb5); break;
+			case 0x00a7: out.put((byte)0xa7); break;
+			case 0x00a8: out.put((byte)0xc8); break;
+			case 0x00a9: out.put((byte)0xa0); break;
+			case 0x00aa: out.put((byte)0xe3); break;
+			case 0x00ab: out.put((byte)0xab); break;
+			case 0x00ac: out.put((byte)0xbe); break;
+			case 0x00AD: if (overrideC0) out.put((byte)0x0F); else return unmappable(in); break;
+			case 0x00ae: out.put((byte)0xb0); break;
+			case 0x00af: out.put((byte)0xc5); break;
+			case 0x00b0: out.put((byte)0xfe); break;
+			case 0x00b1: out.put((byte)0xd1); break;
+			case 0x00b2: out.put((byte)0xc9); break;
+			case 0x00b3: out.put((byte)0xcc); break;
+			case 0x00b4: out.put((byte)0xc2); break;
+			case 0x00b5: out.put((byte)0x9d); break;
+			case 0x00b6: out.put((byte)0xb6); break;
+			case 0x00b7: out.put((byte)0xb4); break;
+			case 0x00b8: out.put((byte)0xcb); break;
+			case 0x00b9: out.put((byte)0xc0); break;
+			case 0x00ba: out.put((byte)0xeb); break;
+			case 0x00bb: out.put((byte)0xbb); break;
+			case 0x00bc: out.put((byte)0xd2); break;
+			case 0x00bd: out.put((byte)0xd3); break;
+			case 0x00be: out.put((byte)0xd4); break;
+			case 0x00bf: out.put((byte)0xbf); break;
+			case 0x00c0: out.put((byte)0x81); break;
+			case 0x00c1: out.put((byte)0x82); break;
+			case 0x00c2: out.put((byte)0x83); break;
+			case 0x00c3: out.put((byte)0x84); break;
+			case 0x00c4: out.put((byte)0x85); break;
+			case 0x00c5: out.put((byte)0x86); break;
+			case 0x00c6: out.put((byte)0xe1); break;
+			case 0x00c7: out.put((byte)0x87); break;
+			case 0x00c8: out.put((byte)0x88); break;
+			case 0x00c9: out.put((byte)0x89); break;
+			case 0x00ca: out.put((byte)0x8a); break;
+			case 0x00cb: out.put((byte)0x8b); break;
+			case 0x00cc: out.put((byte)0x8c); break;
+			case 0x00cd: out.put((byte)0x8d); break;
+			case 0x00ce: out.put((byte)0x8e); break;
+			case 0x00cf: out.put((byte)0x8f); break;
+			case 0x00d0: out.put((byte)0x90); break;
+			case 0x00d1: out.put((byte)0x91); break;
+			case 0x00d2: out.put((byte)0x92); break;
+			case 0x00d3: out.put((byte)0x93); break;
+			case 0x00d4: out.put((byte)0x94); break;
+			case 0x00d5: out.put((byte)0x95); break;
+			case 0x00d6: out.put((byte)0x96); break;
+			case 0x00d7: out.put((byte)0x9e); break;
+			case 0x00d8: out.put((byte)0xe9); break;
+			case 0x00d9: out.put((byte)0x97); break;
+			case 0x00da: out.put((byte)0x98); break;
+			case 0x00db: out.put((byte)0x99); break;
+			case 0x00dc: out.put((byte)0x9a); break;
+			case 0x00dd: out.put((byte)0x9b); break;
+			case 0x00de: out.put((byte)0x9c); break;
+			case 0x00df: out.put((byte)0xfb); break;
+			case 0x00e0: out.put((byte)0xd5); break;
+			case 0x00e1: out.put((byte)0xd6); break;
+			case 0x00e2: out.put((byte)0xd7); break;
+			case 0x00e3: out.put((byte)0xd8); break;
+			case 0x00e4: out.put((byte)0xd9); break;
+			case 0x00e5: out.put((byte)0xda); break;
+			case 0x00e6: out.put((byte)0xf1); break;
+			case 0x00e7: out.put((byte)0xdb); break;
+			case 0x00e8: out.put((byte)0xdc); break;
+			case 0x00e9: out.put((byte)0xdd); break;
+			case 0x00ea: out.put((byte)0xde); break;
+			case 0x00eb: out.put((byte)0xdf); break;
+			case 0x00ec: out.put((byte)0xe0); break;
+			case 0x00ed: out.put((byte)0xe2); break;
+			case 0x00ee: out.put((byte)0xe4); break;
+			case 0x00ef: out.put((byte)0xe5); break;
+			case 0x00f0: out.put((byte)0xe6); break;
+			case 0x00f1: out.put((byte)0xe7); break;
+			case 0x00f2: out.put((byte)0xec); break;
+			case 0x00f3: out.put((byte)0xed); break;
+			case 0x00f4: out.put((byte)0xee); break;
+			case 0x00f5: out.put((byte)0xef); break;
+			case 0x00f6: out.put((byte)0xf0); break;
+			case 0x00f7: out.put((byte)0x9f); break;
+			case 0x00f8: out.put((byte)0xf9); break;
+			case 0x00f9: out.put((byte)0xf2); break;
+			case 0x00fa: out.put((byte)0xf3); break;
+			case 0x00fb: out.put((byte)0xf4); break;
+			case 0x00fc: out.put((byte)0xf6); break;
+			case 0x00fd: out.put((byte)0xf7); break;
+			case 0x00fe: out.put((byte)0xfc); break;
+			case 0x00ff: out.put((byte)0xfd); break;
+			case 0x0131: out.put((byte)0xf5); break;
+			case 0x0141: out.put((byte)0xe8); break;
+			case 0x0142: out.put((byte)0xf8); break;
+			case 0x0152: out.put((byte)0xea); break;
+			case 0x0153: out.put((byte)0xfa); break;
+			case 0x0160: if (overrideC0) out.put((byte)0x01); else return unmappable(in); break;
+			case 0x0161: if (overrideC0) out.put((byte)0x04); else return unmappable(in); break;
+			case 0x0178: if (overrideC0) out.put((byte)0x03); else return unmappable(in); break;
+			case 0x017D: if (overrideC0) out.put((byte)0x02); else return unmappable(in); break;
+			case 0x017E: if (overrideC0) out.put((byte)0x05); else return unmappable(in); break;
+			case 0x0192: out.put((byte)0xa6); break;
+			case 0x02c6: out.put((byte)0xc3); break;
+			case 0x02c7: out.put((byte)0xcf); break;
+			case 0x02cb: out.put((byte)0xc1); break;
+			case 0x02d8: out.put((byte)0xc6); break;
+			case 0x02d9: out.put((byte)0xc7); break;
+			case 0x02da: out.put((byte)0xca); break;
+			case 0x02db: out.put((byte)0xce); break;
+			case 0x02dc: out.put((byte)0xc4); break;
+			case 0x02dd: out.put((byte)0xcd); break;
+			case 0x03A9: if (overrideC0) out.put((byte)0x17); else return unmappable(in); break;
+			case 0x03C0: if (overrideC0) out.put((byte)0x18); else return unmappable(in); break;
+			case 0x2013: out.put((byte)0xb1); break;
+			case 0x2014: out.put((byte)0xd0); break;
+			case 0x2018: if (overrideC0) out.put((byte)0x0E); else return unmappable(in); break;
+			case 0x2019: out.put((byte)0xa9); break;
+			case 0x201a: out.put((byte)0xb8); break;
+			case 0x201c: out.put((byte)0xaa); break;
+			case 0x201d: out.put((byte)0xba); break;
+			case 0x201e: out.put((byte)0xb9); break;
+			case 0x2020: out.put((byte)0xb2); break;
+			case 0x2021: out.put((byte)0xb3); break;
+			case 0x2022: out.put((byte)0xb7); break;
+			case 0x2026: out.put((byte)0xbc); break;
+			case 0x2030: out.put((byte)0xbd); break;
+			case 0x2039: out.put((byte)0xac); break;
+			case 0x203a: out.put((byte)0xad); break;
+			case 0x2044: out.put((byte)0xa4); break;
+			case 0x20ac: out.put((byte)0xff); break;
+			case 0x2122: if (overrideC0) out.put((byte)0x11); else return unmappable(in); break;
+			case 0x2202: if (overrideC0) out.put((byte)0x19); else return unmappable(in); break;
+			case 0x2206: if (overrideC0) out.put((byte)0x16); else return unmappable(in); break;
+			case 0x220F: if (overrideC0) out.put((byte)0x14); else return unmappable(in); break;
+			case 0x2211: if (overrideC0) out.put((byte)0x13); else return unmappable(in); break;
+			case 0x221A: if (overrideC0) out.put((byte)0x12); else return unmappable(in); break;
+			case 0x221E: if (overrideC0) out.put((byte)0x1A); else return unmappable(in); break;
+			case 0x222B: if (overrideC0) out.put((byte)0x15); else return unmappable(in); break;
+			case 0x2248: if (overrideC0) out.put((byte)0x1F); else return unmappable(in); break;
+			case 0x2260: if (overrideC0) out.put((byte)0x1D); else return unmappable(in); break;
+			case 0x2264: if (overrideC0) out.put((byte)0x1C); else return unmappable(in); break;
+			case 0x2265: if (overrideC0) out.put((byte)0x1E); else return unmappable(in); break;
+			case 0x2318: if (overrideC0) out.put((byte)0x07); else return unmappable(in); break;
+			case 0x25CA: if (overrideC0) out.put((byte)0x06); else return unmappable(in); break;
+			case 0xF8FF: if (overrideC0) out.put((byte)0x10); else return unmappable(in); break;
+			case 0xfb01: out.put((byte)0xae); break;
+			case 0xfb02: out.put((byte)0xaf); break;
+			default: return unmappable(in);
+			}
+		}
+		return CoderResult.UNDERFLOW;
+	}
+	
+	private CoderResult unmappable(CharBuffer in) {
+		in.position(in.position() - 1);
+		return CoderResult.unmappableForLength(1);
+	}
+}

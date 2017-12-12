@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<string>true</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>Recode</string>
+	<key>CFBundleGetInfoString</key>
+	<string>Kreative Recode 1.3 © 2012-2013 Kreative Software</string>
+	<key>CFBundleIconFile</key>
+	<string>Recode.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.kreative.recode</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Kreative Recode</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.3</string>
+	<key>CFBundleSignature</key>
+	<string>Tgwa</string>
+	<key>CFBundleVersion</key>
+	<string>1.3</string>
+	<key>JavaX</key>
+	<dict>
+		<key>ClassPath</key>
+		<array>
+			<string>$JAVAROOT/recode.jar</string>
+		</array>
+		<key>JVMVersion</key>
+		<string>1.5+</string>
+		<key>MainClass</key>
+		<string>com.kreative.recode.Recode</string>
+		<key>Properties</key>
+		<dict>
+			<key>apple.laf.useScreenMenuBar</key>
+			<string>true</string>
+		</dict>
+		<key>VMOptions</key>
+		<string>-Xmx1024M</string>
+		<key>WorkingDirectory</key>
+		<string>$APP_PACKAGE/..</string>
+	</dict>
+</dict>
+</plist>

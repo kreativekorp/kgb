@@ -1,0 +1,25 @@
+<launch4jConfig>
+  <headerType>gui</headerType>
+  <outfile>../recode.exe</outfile>
+  <jar>../recode.jar</jar>
+  <errTitle>Kreative Recode</errTitle>
+  <chdir>.</chdir>
+  <customProcName>true</customProcName>
+  <icon>Recode.ico</icon>
+  <jre>
+    <minVersion>1.5.0</minVersion>
+    <maxHeapSize>1024</maxHeapSize>
+  </jre>
+  <versionInfo>
+    <fileVersion>1.3.0.0</fileVersion>
+    <txtFileVersion>1.3</txtFileVersion>
+    <fileDescription>Kreative Recode</fileDescription>
+    <copyright>(C) 2012-2013 Kreative Software</copyright>
+    <productVersion>1.3.0.0</productVersion>
+    <txtProductVersion>1.3</txtProductVersion>
+    <productName>Kreative Recode</productName>
+    <companyName>Kreative Software</companyName>
+    <internalName>Kreative Recode</internalName>
+    <originalFilename>recode.exe</originalFilename>
+  </versionInfo>
+</launch4jConfig>
