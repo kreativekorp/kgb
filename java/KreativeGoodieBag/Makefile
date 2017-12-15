@@ -41,7 +41,7 @@ doc: src
 	mkdir -p doc
 	javadoc -classpath dep/orange-extensions.jar -sourcepath src $(PACKAGES) -d doc
 
-jars: charsetskk.jar kte.jar livefilesize.jar screenruler.jar pushchar.jar javaprops.jar recode.jar
+jars: charsetskk.jar kte.jar livefilesize.jar screenruler.jar pushchar.jar javaprops.jar recode.jar ponyfix.jar
 	chmod a+x *.jar
 
 charsetskk.jar: bin
@@ -82,6 +82,11 @@ recode.jar: bin
 	export COPYFILE_DISABLE=true
 	find bin -name .DS_Store -delete
 	jar cmf dep/MANIFEST-RECODE.MF recode.jar -C bin com/kreative/recode
+
+ponyfix.jar: bin
+	export COPYFILE_DISABLE=true
+	find bin -name .DS_Store -delete
+	jar cmf dep/MANIFEST-PFIX.MF ponyfix.jar -C bin com/kreative/ponyfix
 
 apps: Recode.app
 
