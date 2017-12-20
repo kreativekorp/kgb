@@ -6,6 +6,7 @@ A random assortment of utility programs.
  * JavaProps
  * Kreative Text Encoding Utility
  * LiveFileSize
+ * PonyFix
  * PushChar
  * Kreative Recode
  * Screen Ruler
