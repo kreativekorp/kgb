@@ -18,9 +18,9 @@ public class SuperLatinCharset extends Charset {
 	};
 	
 	private static final List<String> KNOWN_SUBSETS = Arrays.asList(
-			"us-ascii", "iso-8859-1", "windows-1252", "macroman",
-			"x-kk-superlatin", "x-kk-superroman", "x-kk-supermultinational",
-			"x-kk-superlatin-c0", "x-kk-superroman-c0", "x-kk-supermultinational-c0"
+			"us-ascii", "iso-8859-1", "windows-1252", "macroman", "x-nextstep",
+			"x-kk-superlatin", "x-kk-superroman", "x-kk-supermultinational", "x-kk-super437",
+			"x-kk-superlatin-c0", "x-kk-superroman-c0", "x-kk-supermultinational-c0", "x-kk-super437-c0"
 	);
 	private static final List<String> KNOWN_SUBSETS_C0 = Arrays.asList(
 			"us-ascii", "iso-8859-1", "windows-1252", "x-kk-superlatin-c0"

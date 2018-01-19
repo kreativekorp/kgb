@@ -6,15 +6,15 @@ import java.nio.charset.CharsetEncoder;
 import java.util.Arrays;
 import java.util.List;
 
-public class SuperMultinationalCharset extends Charset {
-	private static final String CANONICAL_NAME = "X-KK-SuperMultinational";
-	private static final String CANONICAL_NAME_C0 = "X-KK-SuperMultinational-C0";
+public class Super437Charset extends Charset {
+	private static final String CANONICAL_NAME = "X-KK-Super437";
+	private static final String CANONICAL_NAME_C0 = "X-KK-Super437-C0";
 	
 	private static final String[] ALIASES = {
-		"X-SuperMultinational", "X-Kreative-SuperMultinational"
+		"X-Super437", "X-Kreative-Super437"
 	};
 	private static final String[] ALIASES_C0 = {
-		"X-SuperMultinational-C0", "X-Kreative-SuperMultinational-C0"
+		"X-Super437-C0", "X-Kreative-Super437-C0"
 	};
 	
 	private static final List<String> KNOWN_SUBSETS = Arrays.asList(
@@ -23,13 +23,13 @@ public class SuperMultinationalCharset extends Charset {
 			"x-kk-superlatin-c0", "x-kk-superroman-c0", "x-kk-supermultinational-c0", "x-kk-super437-c0"
 	);
 	private static final List<String> KNOWN_SUBSETS_C0 = Arrays.asList(
-			"us-ascii", "x-nextstep", "x-kk-supermultinational-c0"
+			"us-ascii", "x-kk-super437-c0"
 	);
 	
 	private final List<String> knownSubsets;
 	private final boolean overrideC0;
 	
-	public SuperMultinationalCharset(boolean overrideC0) {
+	public Super437Charset(boolean overrideC0) {
 		super(
 				overrideC0 ? CANONICAL_NAME : CANONICAL_NAME_C0,
 				overrideC0 ? ALIASES : ALIASES_C0
@@ -45,11 +45,11 @@ public class SuperMultinationalCharset extends Charset {
 
 	@Override
 	public CharsetDecoder newDecoder() {
-		return new SuperMultinationalDecoder(this, overrideC0);
+		return new Super437Decoder(this, overrideC0);
 	}
 
 	@Override
 	public CharsetEncoder newEncoder() {
-		return new SuperMultinationalEncoder(this, overrideC0);
+		return new Super437Encoder(this, overrideC0);
 	}
 }

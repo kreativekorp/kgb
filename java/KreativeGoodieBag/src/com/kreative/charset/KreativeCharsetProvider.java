@@ -13,7 +13,8 @@ public class KreativeCharsetProvider extends CharsetProvider {
 		charsets = Arrays.asList(
 				new SuperLatinCharset(true), new SuperLatinCharset(false),
 				new SuperMultinationalCharset(true), new SuperMultinationalCharset(false),
-				new SuperRomanCharset(true), new SuperRomanCharset(false)
+				new SuperRomanCharset(true), new SuperRomanCharset(false),
+				new Super437Charset(true), new Super437Charset(false)
 		);
 	}
 	
