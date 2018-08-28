@@ -5,11 +5,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
-import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -19,8 +18,9 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.Scrollable;
 
-import com.kreative.acc.shared.unidata.UniDataUtilities;
 import com.kreative.awt.FractionalSizeGridLayout;
+import com.kreative.unicode.Block;
+import com.kreative.unicode.BlockList;
 
 public class PushCharPanel extends JPanel implements Scrollable {
 	private static final long serialVersionUID = 1L;
@@ -29,9 +29,34 @@ public class PushCharPanel extends JPanel implements Scrollable {
 	private static final Color HEADER_TEXT = Color.white;
 	private static final Font HEADER_FONT = new Font("Dialog", Font.BOLD, 10);
 	
+	private final BlockList blockList;
+	private final SortedMap<Integer,Block> blockMap;
 	private final JPanel mainPanel;
 	
 	public PushCharPanel() {
+		blockList = BlockList.instance();
+		blockMap = new TreeMap<Integer,Block>();
+		for (Block block : blockList) {
+			for (Map.Entry<Integer,Block> e : blockMap.entrySet()) {
+				Block oldBlock = e.getValue();
+				if (block.firstCodePoint >= oldBlock.firstCodePoint && block.lastCodePoint <= oldBlock.lastCodePoint) {
+					if (block.firstCodePoint > oldBlock.firstCodePoint) {
+						Block leftBlock = new Block(oldBlock.firstCodePoint, block.firstCodePoint - 1, oldBlock.name);
+						blockMap.put(leftBlock.firstCodePoint, leftBlock);
+					}
+					if (block.lastCodePoint < oldBlock.lastCodePoint) {
+						Block rightBlock = new Block(block.lastCodePoint + 1, oldBlock.lastCodePoint, oldBlock.name);
+						blockMap.put(rightBlock.firstCodePoint, rightBlock);
+					}
+					break;
+				}
+			}
+			blockMap.put(block.firstCodePoint, block);
+		}
+		for (Block block : blockMap.values()) {
+			System.out.println(Integer.toHexString(block.firstCodePoint) + "\t" + Integer.toHexString(block.lastCodePoint) + "\t" + block.name);
+		}
+		
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 		setLayout(new BorderLayout());
@@ -64,20 +89,11 @@ public class PushCharPanel extends JPanel implements Scrollable {
 	public synchronized void update(Font font, JLabel footerLabel) {
 		mainPanel.removeAll();
 		
-		List<Integer> blockStartPoints = new ArrayList<Integer>();
-		blockStartPoints.addAll(UniDataUtilities.getUnicodeBlocks().keySet());
-		Collections.sort(blockStartPoints);
 		BitSet chars = CharInFont.getInstance().allCharsInFont(font.getName());
-		
-		Iterator<Integer> si = blockStartPoints.iterator();
-		int blockStart = si.hasNext() ? si.next() : 0;
-		while (si.hasNext()) {
-			int blockEnd = si.next();
-			
-			int blockCharCount = chars.get(blockStart,blockEnd).cardinality();
+		for (Block block : blockMap.values()) {
+			int blockCharCount = chars.get(block.firstCodePoint, block.lastCodePoint + 1).cardinality();
 			if (blockCharCount > 0) {
-				String blockName = UniDataUtilities.getUnicodeBlocks().get(blockStart);
-				JLabel headerLabel = new JLabel(blockName + " (" + blockCharCount + ")");
+				JLabel headerLabel = new JLabel(block.name + " (" + blockCharCount + ")");
 				headerLabel.setFont(HEADER_FONT);
 				headerLabel.setHorizontalAlignment(JLabel.LEFT);
 				headerLabel.setOpaque(true);
@@ -89,7 +105,7 @@ public class PushCharPanel extends JPanel implements Scrollable {
 				mainPanel.add(headerPanel);
 				
 				JPanel blockPanel = new JPanel(new FractionalSizeGridLayout(0,1));
-				for (int lineStart = blockStart, lineEnd = blockStart + 16; lineStart < blockEnd; lineStart += 16, lineEnd += 16) {
+				for (int lineStart = block.firstCodePoint, lineEnd = block.firstCodePoint + 16; lineStart <= block.lastCodePoint; lineStart += 16, lineEnd += 16) {
 					if (!chars.get(lineStart,lineEnd).isEmpty()) {
 						JPanel linePanel = new JPanel(new FractionalSizeGridLayout(1,16));
 						for (int codePoint = lineStart; codePoint < lineEnd; codePoint++) {
@@ -108,8 +124,6 @@ public class PushCharPanel extends JPanel implements Scrollable {
 				}
 				mainPanel.add(blockPanel);
 			}
-			
-			blockStart = blockEnd;
 		}
 		revalidate();
 	}

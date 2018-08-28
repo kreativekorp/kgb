@@ -8,14 +8,15 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
-import com.kreative.acc.shared.unidata.CharacterInfo;
-import com.kreative.acc.shared.unidata.UniDataUtilities;
+import com.kreative.unicode.CharacterData;
+import com.kreative.unicode.CharacterDatabase;
 
 public class PushCharCell extends JLabel implements MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
 	
 	private final int codePoint;
 	private final JLabel footerLabel;
+	private final CharacterDatabase cdb;
 	
 	public PushCharCell(Font font, int codePoint, JLabel footerLabel) {
 		super(new String(Character.toChars(codePoint)));
@@ -29,27 +30,19 @@ public class PushCharCell extends JLabel implements MouseListener, MouseMotionLi
 		addMouseMotionListener(this);
 		this.codePoint = codePoint;
 		this.footerLabel = footerLabel;
+		this.cdb = CharacterDatabase.instance();
 	}
 	
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		setBackground(SystemColor.textHighlight);
 		setForeground(SystemColor.textHighlightText);
-		StringBuffer infoString = new StringBuffer();
-		String h = "000000" + Integer.toHexString(codePoint);
-		h = h.substring(h.length() - ((codePoint >= 0x10000) ? 6 : 4)).toUpperCase();
-		infoString.append("U+");
-		infoString.append(h);
-		infoString.append("    #");
-		infoString.append(Integer.toString(codePoint));
-		CharacterInfo charInfo = UniDataUtilities.getUnicodeProperties().get(codePoint);
-		if (charInfo != null) {
-			infoString.append("    ");
-			infoString.append(charInfo.getCharacterName());
-			infoString.append("    ");
-			infoString.append(charInfo.getCharacterClassDescription());
-		}
-		footerLabel.setText(infoString.toString());
+		String h = Integer.toHexString(codePoint).toUpperCase();
+		while (h.length() < 4) h = "0" + h;
+		String s = "U+" + h + "    #" + codePoint;
+		CharacterData cd = cdb.get(codePoint);
+		if (cd != null) s += "    " + cd.category + "    " + cd;
+		footerLabel.setText(s);
 	}
 	
 	@Override

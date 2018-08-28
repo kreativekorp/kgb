@@ -3,7 +3,6 @@ package com.kreative.acc.pushchar;
 import java.awt.Font;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import com.kreative.acc.shared.unidata.UniDataUtilities;
 
 public class PushChar {
 	private static enum Mode { AUTO, INFO, GUI, ERROR; }
@@ -62,9 +61,6 @@ public class PushChar {
 			final String ffName = fontName;
 			final int ffStyle = fontStyle;
 			final int ffSize = fontSize;
-			
-			UniDataUtilities.getUnicodeBlocks();
-			UniDataUtilities.getUnicodeProperties();
 			
 			try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch (Exception e) {}
 			SwingUtilities.invokeLater(new Runnable() {
