@@ -53,9 +53,6 @@ public class PushCharPanel extends JPanel implements Scrollable {
 			}
 			blockMap.put(block.firstCodePoint, block);
 		}
-		for (Block block : blockMap.values()) {
-			System.out.println(Integer.toHexString(block.firstCodePoint) + "\t" + Integer.toHexString(block.lastCodePoint) + "\t" + block.name);
-		}
 		
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
