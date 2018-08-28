@@ -1,5 +1,5 @@
 SRCFILES := $(shell find src -name \*.java)
-RESFILES := $(shell (find src -name \*.png ; find src -name \*.map ; find src -name \*.jnilib) | sed s/^src\\///)
+RESFILES := $(shell (find src -name \*.png ; find src -name \*.map ; find src -name \*.txt ; find src -name \*.jnilib) | sed s/^src\\///)
 PACKAGES := $(shell find src/com/kreative -type d \! -path \*/.\* | sed s/^src\\/// | tr / .)
 
 all: clean bin doc jars apps exes kgb.tgz
@@ -71,7 +71,7 @@ screenruler.jar: bin
 pushchar.jar: bin
 	export COPYFILE_DISABLE=true
 	find bin -name .DS_Store -delete
-	jar cmf dep/MANIFEST-PCH.MF pushchar.jar -C bin com/kreative/acc/pushchar -C bin com/kreative/acc/shared/unidata -C bin com/kreative/awt
+	jar cmf dep/MANIFEST-PCH.MF pushchar.jar -C bin com/kreative/acc/pushchar -C bin com/kreative/unicode -C bin com/kreative/awt
 
 javaprops.jar: bin
 	export COPYFILE_DISABLE=true
