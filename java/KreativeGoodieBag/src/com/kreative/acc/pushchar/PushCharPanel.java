@@ -21,6 +21,7 @@ import javax.swing.Scrollable;
 import com.kreative.awt.FractionalSizeGridLayout;
 import com.kreative.unicode.Block;
 import com.kreative.unicode.BlockList;
+import com.kreative.unicode.EncodingTable;
 
 public class PushCharPanel extends JPanel implements Scrollable {
 	private static final long serialVersionUID = 1L;
@@ -85,36 +86,17 @@ public class PushCharPanel extends JPanel implements Scrollable {
 	
 	public synchronized void update(Font font, JLabel footerLabel) {
 		mainPanel.removeAll();
-		
 		BitSet chars = CharInFont.getInstance().allCharsInFont(font.getName());
 		for (Block block : blockMap.values()) {
 			int blockCharCount = chars.get(block.firstCodePoint, block.lastCodePoint + 1).cardinality();
 			if (blockCharCount > 0) {
-				JLabel headerLabel = new JLabel(block.name + " (" + blockCharCount + ")");
-				headerLabel.setFont(HEADER_FONT);
-				headerLabel.setHorizontalAlignment(JLabel.LEFT);
-				headerLabel.setOpaque(true);
-				headerLabel.setBackground(HEADER_COLOR);
-				headerLabel.setForeground(HEADER_TEXT);
-				headerLabel.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
-				JPanel headerPanel = new JPanel(new FractionalSizeGridLayout(1,1));
-				headerPanel.add(headerLabel);
-				mainPanel.add(headerPanel);
-				
+				mainPanel.add(createHeader(block.name, blockCharCount));
 				JPanel blockPanel = new JPanel(new FractionalSizeGridLayout(0,1));
 				for (int lineStart = block.firstCodePoint, lineEnd = block.firstCodePoint + 16; lineStart <= block.lastCodePoint; lineStart += 16, lineEnd += 16) {
 					if (!chars.get(lineStart,lineEnd).isEmpty()) {
 						JPanel linePanel = new JPanel(new FractionalSizeGridLayout(1,16));
 						for (int codePoint = lineStart; codePoint < lineEnd; codePoint++) {
-							if (chars.get(codePoint)) {
-								JLabel cell = new PushCharCell(font, codePoint, footerLabel);
-								linePanel.add(cell);
-							} else {
-								JLabel cell = new JLabel();
-								cell.setOpaque(true);
-								cell.setBackground(Color.lightGray);
-								linePanel.add(cell);
-							}
+							linePanel.add(createCell(chars, font, codePoint, footerLabel));
 						}
 						blockPanel.add(linePanel);
 					}
@@ -123,6 +105,47 @@ public class PushCharPanel extends JPanel implements Scrollable {
 			}
 		}
 		revalidate();
+	}
+	
+	public synchronized void update(EncodingTable enc, Font font, JLabel footerLabel) {
+		mainPanel.removeAll();
+		BitSet chars = CharInFont.getInstance().allCharsInFont(font.getName());
+		int charCount = 0; for (int cp : enc) if (cp >= 0 && chars.get(cp)) charCount++;
+		mainPanel.add(createHeader(enc.name, charCount));
+		JPanel blockPanel = new JPanel(new FractionalSizeGridLayout(0,1));
+		for (int lineStart = 0, lineEnd = 16; lineStart < enc.size(); lineStart += 16, lineEnd += 16) {
+			JPanel linePanel = new JPanel(new FractionalSizeGridLayout(1,16));
+			for (int index = lineStart; index < lineEnd; index++) {
+				linePanel.add(createCell(chars, font, enc.get(index), footerLabel));
+			}
+			blockPanel.add(linePanel);
+		}
+		mainPanel.add(blockPanel);
+		revalidate();
+	}
+	
+	private static JPanel createHeader(String name, int count) {
+		JLabel headerLabel = new JLabel(name + " (" + count + ")");
+		headerLabel.setFont(HEADER_FONT);
+		headerLabel.setHorizontalAlignment(JLabel.LEFT);
+		headerLabel.setOpaque(true);
+		headerLabel.setBackground(HEADER_COLOR);
+		headerLabel.setForeground(HEADER_TEXT);
+		headerLabel.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+		JPanel headerPanel = new JPanel(new FractionalSizeGridLayout(1,1));
+		headerPanel.add(headerLabel);
+		return headerPanel;
+	}
+	
+	private static JLabel createCell(BitSet chars, Font font, int codePoint, JLabel footerLabel) {
+		if (codePoint >= 0 && chars.get(codePoint)) {
+			return new PushCharCell(font, codePoint, footerLabel);
+		} else {
+			JLabel cell = new JLabel();
+			cell.setOpaque(true);
+			cell.setBackground(Color.lightGray);
+			return cell;
+		}
 	}
 	
 	@Override

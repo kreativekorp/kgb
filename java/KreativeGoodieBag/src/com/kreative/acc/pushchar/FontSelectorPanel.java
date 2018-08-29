@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -22,6 +21,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import com.kreative.unicode.EncodingList;
+import com.kreative.unicode.EncodingTable;
 
 public class FontSelectorPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -34,8 +35,13 @@ public class FontSelectorPanel extends JPanel {
 	private final JSpinner fontSizeComponent;
 	private final JToggleButton fontBoldButton;
 	private final JToggleButton fontItalicButton;
+	private final JList encodingList;
+	private final JScrollPane encodingComponent;
+	private final JLabel encodingLabel;
+	private final JToggleButton encodingButton;
 	private final List<ActionListener> listeners;
 	private boolean settingFont;
+	private boolean settingEncoding;
 	
 	public FontSelectorPanel() {
 		String[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
@@ -57,12 +63,23 @@ public class FontSelectorPanel extends JPanel {
 		fontItalicButton.setToolTipText("Italic");
 		fontItalicButton.setFont(fontItalicButton.getFont().deriveFont(Font.ITALIC));
 		fontItalicButton.putClientProperty("JButton.buttonType", "square");
+		List<Object> encodings = new ArrayList<Object>();
+		encodings.add("Unicode");
+		encodings.addAll(EncodingList.instance());
+		encodingList = new JList(encodings.toArray());
+		encodingComponent = new JScrollPane(encodingList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		encodingLabel = new JLabel();
+		encodingButton = new JToggleButton(" E ");
+		encodingButton.setToolTipText("Show Encoding List");
+		encodingButton.putClientProperty("JButton.buttonType", "square");
 		listeners = new ArrayList<ActionListener>();
 		settingFont = false;
+		settingEncoding = false;
 		
 		JPanel fontStylePanel = new JPanel(new GridLayout(1,0,-1,-1));
 		fontStylePanel.add(fontBoldButton);
 		fontStylePanel.add(fontItalicButton);
+		fontStylePanel.add(encodingButton);
 		
 		JPanel fontSizeStylePanel = new JPanel(new BorderLayout(12,12));
 		fontSizeStylePanel.add(fontSizeComponent, BorderLayout.CENTER);
@@ -113,10 +130,32 @@ public class FontSelectorPanel extends JPanel {
 				if (!settingFont) fireActionListeners();
 			}
 		});
+		encodingList.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				String oldValue = encodingLabel.getText();
+				String newValue = encodingList.getSelectedValue().toString();
+				if (!oldValue.equals(newValue)) {
+					encodingLabel.setText(newValue);
+					if (!settingEncoding) fireActionListeners();
+				}
+			}
+		});
+		encodingButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				encodingComponent.setVisible(encodingButton.isSelected());
+				revalidate();
+			}
+		});
 	}
 	
 	public JComponent getFontNameComponent() {
 		return fontNameComponent;
+	}
+	
+	public JComponent getEncodingComponent() {
+		return encodingComponent;
 	}
 	
 	public synchronized Font getSelectedFont() {
@@ -137,6 +176,24 @@ public class FontSelectorPanel extends JPanel {
 		fontBoldButton.setSelected((font.getStyle() & Font.BOLD) != 0);
 		fontItalicButton.setSelected((font.getStyle() & Font.ITALIC) != 0);
 		settingFont = false;
+	}
+	
+	public synchronized EncodingTable getSelectedEncoding() {
+		Object o = encodingList.getSelectedValue();
+		return (o instanceof EncodingTable) ? (EncodingTable)o : null;
+	}
+	
+	public synchronized void setSelectedEncoding(EncodingTable enc) {
+		settingEncoding = true;
+		if (enc == null) {
+			encodingList.setSelectedIndex(0);
+			encodingLabel.setText("Unicode");
+		} else {
+			encodingList.setSelectedValue(enc, true);
+			encodingLabel.setText(enc.name);
+		}
+		encodingButton.setSelected(encodingComponent.isVisible());
+		settingEncoding = false;
 	}
 	
 	public synchronized void addActionListener(ActionListener listener) {

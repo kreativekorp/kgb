@@ -5,13 +5,13 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import com.kreative.unicode.EncodingTable;
 
 public class PushCharFrame extends JFrame {
 	private static final long serialVersionUID = 1;
@@ -36,19 +36,25 @@ public class PushCharFrame extends JFrame {
 		JPanel main = new JPanel(new BorderLayout());
 		main.add(fontPanel, BorderLayout.PAGE_START);
 		main.add(fontPanel.getFontNameComponent(), BorderLayout.LINE_START);
+		main.add(fontPanel.getEncodingComponent(), BorderLayout.LINE_END);
 		main.add(scrollPane, BorderLayout.CENTER);
 		main.add(footerLabel, BorderLayout.PAGE_END);
 		setContentPane(main);
 		
 		fontPanel.getFontNameComponent().setVisible(false);
+		fontPanel.getEncodingComponent().setVisible(false);
 		fontPanel.setSelectedFont(font);
+		fontPanel.setSelectedEncoding(null);
 		fontPanel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				mainPanel.loading();
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						mainPanel.update(fontPanel.getSelectedFont(), footerLabel);
+						Font font = fontPanel.getSelectedFont();
+						EncodingTable enc = fontPanel.getSelectedEncoding();
+						if (enc == null) mainPanel.update(font, footerLabel);
+						else mainPanel.update(enc, font, footerLabel);
 					}
 				});
 			}
@@ -62,7 +68,10 @@ public class PushCharFrame extends JFrame {
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				mainPanel.update(fontPanel.getSelectedFont(), footerLabel);
+				Font font = fontPanel.getSelectedFont();
+				EncodingTable enc = fontPanel.getSelectedEncoding();
+				if (enc == null) mainPanel.update(font, footerLabel);
+				else mainPanel.update(enc, font, footerLabel);
 			}
 		});
 	}
