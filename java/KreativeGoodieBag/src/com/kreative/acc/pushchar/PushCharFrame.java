@@ -5,13 +5,13 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
-import com.kreative.unicode.EncodingTable;
 
 public class PushCharFrame extends JFrame {
 	private static final long serialVersionUID = 1;
@@ -52,7 +52,7 @@ public class PushCharFrame extends JFrame {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						Font font = fontPanel.getSelectedFont();
-						EncodingTable enc = fontPanel.getSelectedEncoding();
+						List<Integer> enc = fontPanel.getSelectedEncoding();
 						if (enc == null) mainPanel.update(font, footerLabel);
 						else mainPanel.update(enc, font, footerLabel);
 					}
@@ -69,7 +69,7 @@ public class PushCharFrame extends JFrame {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				Font font = fontPanel.getSelectedFont();
-				EncodingTable enc = fontPanel.getSelectedEncoding();
+				List<Integer> enc = fontPanel.getSelectedEncoding();
 				if (enc == null) mainPanel.update(font, footerLabel);
 				else mainPanel.update(enc, font, footerLabel);
 			}

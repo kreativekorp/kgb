@@ -22,7 +22,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import com.kreative.unicode.EncodingList;
-import com.kreative.unicode.EncodingTable;
+import com.kreative.unicode.GlyphLists;
 
 public class FontSelectorPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -65,6 +65,7 @@ public class FontSelectorPanel extends JPanel {
 		fontItalicButton.putClientProperty("JButton.buttonType", "square");
 		List<Object> encodings = new ArrayList<Object>();
 		encodings.add("Unicode");
+		encodings.addAll(GlyphLists.instance());
 		encodings.addAll(EncodingList.instance());
 		encodingList = new JList(encodings.toArray());
 		encodingComponent = new JScrollPane(encodingList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -178,19 +179,20 @@ public class FontSelectorPanel extends JPanel {
 		settingFont = false;
 	}
 	
-	public synchronized EncodingTable getSelectedEncoding() {
+	@SuppressWarnings("unchecked")
+	public synchronized List<Integer> getSelectedEncoding() {
 		Object o = encodingList.getSelectedValue();
-		return (o instanceof EncodingTable) ? (EncodingTable)o : null;
+		return (o instanceof List<?>) ? (List<Integer>)o : null;
 	}
 	
-	public synchronized void setSelectedEncoding(EncodingTable enc) {
+	public synchronized void setSelectedEncoding(List<Integer> enc) {
 		settingEncoding = true;
 		if (enc == null) {
 			encodingList.setSelectedIndex(0);
 			encodingLabel.setText("Unicode");
 		} else {
 			encodingList.setSelectedValue(enc, true);
-			encodingLabel.setText(enc.name);
+			encodingLabel.setText(enc.toString());
 		}
 		encodingButton.setSelected(encodingComponent.isVisible());
 		settingEncoding = false;

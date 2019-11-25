@@ -6,10 +6,10 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.util.BitSet;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -17,11 +17,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.Scrollable;
-
 import com.kreative.awt.FractionalSizeGridLayout;
 import com.kreative.unicode.Block;
 import com.kreative.unicode.BlockList;
-import com.kreative.unicode.EncodingTable;
 
 public class PushCharPanel extends JPanel implements Scrollable {
 	private static final long serialVersionUID = 1L;
@@ -90,7 +88,7 @@ public class PushCharPanel extends JPanel implements Scrollable {
 		for (Block block : blockMap.values()) {
 			int blockCharCount = chars.get(block.firstCodePoint, block.lastCodePoint + 1).cardinality();
 			if (blockCharCount > 0) {
-				mainPanel.add(createHeader(block.name, blockCharCount));
+				mainPanel.add(createHeader(block.name, blockCharCount, block.size()));
 				JPanel blockPanel = new JPanel(new FractionalSizeGridLayout(0,1));
 				for (int lineStart = block.firstCodePoint, lineEnd = block.firstCodePoint + 16; lineStart <= block.lastCodePoint; lineStart += 16, lineEnd += 16) {
 					if (!chars.get(lineStart,lineEnd).isEmpty()) {
@@ -107,16 +105,17 @@ public class PushCharPanel extends JPanel implements Scrollable {
 		revalidate();
 	}
 	
-	public synchronized void update(EncodingTable enc, Font font, JLabel footerLabel) {
+	public synchronized void update(List<Integer> enc, Font font, JLabel footerLabel) {
 		mainPanel.removeAll();
 		BitSet chars = CharInFont.getInstance().allCharsInFont(font.getName());
 		int charCount = 0; for (int cp : enc) if (cp >= 0 && chars.get(cp)) charCount++;
-		mainPanel.add(createHeader(enc.name, charCount));
+		mainPanel.add(createHeader(enc.toString(), charCount, enc.size()));
 		JPanel blockPanel = new JPanel(new FractionalSizeGridLayout(0,1));
 		for (int lineStart = 0, lineEnd = 16; lineStart < enc.size(); lineStart += 16, lineEnd += 16) {
 			JPanel linePanel = new JPanel(new FractionalSizeGridLayout(1,16));
 			for (int index = lineStart; index < lineEnd; index++) {
-				linePanel.add(createCell(chars, font, enc.get(index), footerLabel));
+				int cp = (index < enc.size()) ? enc.get(index) : -1;
+				linePanel.add(createCell(chars, font, cp, footerLabel));
 			}
 			blockPanel.add(linePanel);
 		}
@@ -124,8 +123,8 @@ public class PushCharPanel extends JPanel implements Scrollable {
 		revalidate();
 	}
 	
-	private static JPanel createHeader(String name, int count) {
-		JLabel headerLabel = new JLabel(name + " (" + count + ")");
+	private static JPanel createHeader(String name, int count, int total) {
+		JLabel headerLabel = new JLabel(name + " (" + count + "/" + total + ")");
 		headerLabel.setFont(HEADER_FONT);
 		headerLabel.setHorizontalAlignment(JLabel.LEFT);
 		headerLabel.setOpaque(true);
