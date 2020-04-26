@@ -2,6 +2,7 @@ package com.kreative.acc.pushchar;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.SystemColor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -25,7 +26,9 @@ public class PushCharCell extends JLabel implements MouseListener, MouseMotionLi
 		setOpaque(true);
 		setBackground(Color.white);
 		setForeground(Color.black);
-		setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+		FontMetrics fm = getFontMetrics(font);
+		int vp = Math.max(2, (int)Math.round(fm.getHeight() / 6f));
+		setBorder(BorderFactory.createEmptyBorder(vp, 2, vp, 2));
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		this.codePoint = codePoint;
