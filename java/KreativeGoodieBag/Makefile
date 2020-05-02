@@ -1,6 +1,6 @@
 SRCFILES := $(shell find src -name \*.java)
 RESFILES := $(shell (find src -name \*.png ; find src -name \*.map ; find src -name \*.txt ; find src -name \*.jnilib) | sed s/^src\\///)
-PACKAGES := $(shell find src/com/kreative -type d \! -path \*/.\* | sed s/^src\\/// | tr / .)
+PACKAGES := $(shell find src -name \*.java | sed -E s/^src\\/\|\\/[^\\/]+$$//g | sort | uniq | tr / .)
 
 all: clean bin doc jars apps exes kgb.tgz
 
