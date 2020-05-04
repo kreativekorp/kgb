@@ -345,11 +345,11 @@ public class MakeGlyphTable {
 				int cx = x + table.options.borderWidth + table.options.padding.left;
 				if (array instanceof GlyphImageArray) {
 					int row = ((GlyphImageArray)array).row;
-					int top = table.options.borderWidth + table.options.padding.top;
+					int hd = Math.max(4, Integer.toHexString(row).length());
 					int cy = headerHeight - table.options.padding.bottom;
 					g.setColor((table.options.hexfg != null) ? table.options.hexfg : Color.black);
-					while (true) {
-						if ((cy -= table.hexArray.maxHeight) < top) break;
+					while (--hd > 0) {
+						cy -= table.hexArray.maxHeight;
 						int i = (row >>= 4) & 15;
 						int cp = (i < 10) ? ('0' + i) : ('A' + i - 10);
 						BufferedImage glyph = table.hexArray.images[i];
