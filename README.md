@@ -1,12 +1,13 @@
-# Kreative Goodie Bag
+The useful parts of this repository have been moved to separate repositories.
 
-A random assortment of utility programs.
+ * CharsetsKK, a collection of legacy character encodings, has moved to https://github.com/kreativekorp/charsets
+ * PushChar, a Unicode character picker, has moved to https://github.com/kreativekorp/pushchar
+ * Kreative Recode, a text re-encoding and transformation tool, has moved to https://github.com/kreativekorp/recode
 
- * CharsetsKK
- * JavaProps
+What remains is not that useful and will not be maintained going forward.
+
+ * Java Properties Viewer
  * Kreative Text Encoding Utility
  * LiveFileSize
  * PonyFix
- * PushChar
- * Kreative Recode
  * Screen Ruler
