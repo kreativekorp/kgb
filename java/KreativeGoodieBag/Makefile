@@ -1,5 +1,5 @@
 SRCFILES := $(shell find src -name \*.java)
-RESFILES := $(shell (find src -name \*.png ; find src -name \*.map ; find src -name \*.txt ; find src -name \*.jnilib) | sed s/^src\\///)
+RESFILES := $(shell find src -type f \! -name .\* \! -name \*.java | sed s/^src\\///)
 PACKAGES := $(shell find src -name \*.java | sed -E s/^src\\/\|\\/[^\\/]+$$//g | sort | uniq | tr / .)
 
 all: clean bin doc jars apps exes kgb.tgz
@@ -22,14 +22,6 @@ eclipseclean:
 	rm -rf kgb.tgz
 	rm -rf dist
 
-jni-bin: jni-src
-	rm -rf jni-bin
-	mkdir -p jni-bin
-	rm -f com_kreative_acc_pushchar_MacCharInFont.o
-	cc -c -I/Library/Java/Home/include jni-src/com_kreative_acc_pushchar_MacCharInFont.c
-	cc -dynamiclib -o jni-bin/libMacCharInFont.jnilib com_kreative_acc_pushchar_MacCharInFont.o -framework JavaVM -framework CoreFoundation -framework ApplicationServices
-	rm -f com_kreative_acc_pushchar_MacCharInFont.o
-
 bin: src
 	mkdir -p bin
 	javac -classpath dep/orange-extensions.jar -sourcepath src $(SRCFILES) -d bin
@@ -41,17 +33,8 @@ doc: src
 	mkdir -p doc
 	javadoc -classpath dep/orange-extensions.jar -sourcepath src $(PACKAGES) -d doc
 
-jars: charsetskk.jar kte.jar livefilesize.jar screenruler.jar pushchar.jar javaprops.jar recode.jar ponyfix.jar
+jars: kte.jar livefilesize.jar screenruler.jar javaprops.jar recode.jar ponyfix.jar
 	chmod a+x *.jar
-
-charsetskk.jar: bin
-	export COPYFILE_DISABLE=true
-	find bin -name .DS_Store -delete
-	rm -rf dist
-	mkdir -p dist/META-INF/services
-	cp dep/java.nio.charset.spi.CharsetProvider dist/META-INF/services/
-	jar cmf dep/MANIFEST-CHARSET.MF charsetskk.jar -C dist META-INF -C bin com/kreative/charset
-	rm -rf dist
 
 kte.jar: bin
 	export COPYFILE_DISABLE=true
@@ -67,11 +50,6 @@ screenruler.jar: bin
 	export COPYFILE_DISABLE=true
 	find bin -name .DS_Store -delete
 	jar cmf dep/MANIFEST-SR.MF screenruler.jar -C bin com/kreative/acc/screenruler
-
-pushchar.jar: bin
-	export COPYFILE_DISABLE=true
-	find bin -name .DS_Store -delete
-	jar cmf dep/MANIFEST-PCH.MF pushchar.jar -C bin com/kreative/acc/pushchar -C bin com/kreative/unicode -C bin com/kreative/awt
 
 javaprops.jar: bin
 	export COPYFILE_DISABLE=true
