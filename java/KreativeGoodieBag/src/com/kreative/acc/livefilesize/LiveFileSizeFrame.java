@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -80,7 +79,7 @@ public class LiveFileSizeFrame extends JFrame {
 		main.setComponentPopupMenu(new LiveFileSizeMenu(this));
 		
 		setContentPane(main);
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
 		pack();
 		setLocationRelativeTo(null);
@@ -88,12 +87,6 @@ public class LiveFileSizeFrame extends JFrame {
 		
 		updater = new FileSizeUpdateThread();
 		updater.start();
-	}
-	
-	@Override
-	public void dispose() {
-		updater.interrupt();
-		super.dispose();
 	}
 	
 	public synchronized void addFile(File f) {
@@ -123,6 +116,7 @@ public class LiveFileSizeFrame extends JFrame {
 			}
 		});
 		
+		revalidate();
 		pack();
 	}
 	
@@ -140,6 +134,7 @@ public class LiveFileSizeFrame extends JFrame {
 		bsizePanel.remove(index);
 		removePanel.remove(index);
 		
+		revalidate();
 		pack();
 	}
 	
@@ -157,6 +152,7 @@ public class LiveFileSizeFrame extends JFrame {
 		bsizePanel.removeAll();
 		removePanel.removeAll();
 		
+		revalidate();
 		pack();
 	}
 	
@@ -185,18 +181,26 @@ public class LiveFileSizeFrame extends JFrame {
 			msizeLabelList.get(i).setText(m);
 		}
 		
+		revalidate();
 		pack();
+	}
+	
+	private String lastOpenDirectory = null;
+	public void addFile() {
+		FileDialog fd = new FileDialog(this, "Select File", FileDialog.LOAD);
+		if (lastOpenDirectory != null) fd.setDirectory(lastOpenDirectory);
+		fd.setVisible(true);
+		String ds = fd.getDirectory(), fs = fd.getFile();
+		fd.dispose();
+		if (ds == null || fs == null) return;
+		File file = new File((lastOpenDirectory = ds), fs);
+		addFile(file);
 	}
 	
 	private class AddFileActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			FileDialog fd = new FileDialog(LiveFileSizeFrame.this, "Select File", FileDialog.LOAD);
-			fd.setVisible(true);
-			if (fd.getDirectory() != null && fd.getFile() != null) {
-				File f = new File(fd.getDirectory(), fd.getFile());
-				addFile(f);
-			}
+			addFile();
 		}
 	};
 	

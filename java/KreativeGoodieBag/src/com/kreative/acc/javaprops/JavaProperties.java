@@ -1,5 +1,8 @@
 package com.kreative.acc.javaprops;
 
+import java.awt.Toolkit;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.Properties;
 import java.util.SortedSet;
@@ -16,8 +19,8 @@ public class JavaProperties {
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
 			if (arg.equalsIgnoreCase("-version") || arg.equalsIgnoreCase("--version")) {
-				System.out.println("Java Properties 1.1");
-				System.out.println("(c) 2012-2013 Kreative Software");
+				System.out.println("Java Properties 1.1.1");
+				System.out.println("(c) 2012-2023 Kreative Software");
 				if (mode == Mode.AUTO) mode = Mode.INFO;
 			} else if (arg.equalsIgnoreCase("-help") || arg.equalsIgnoreCase("--help")) {
 				System.out.println("java -jar javaprops.jar [ -nogui | -gui ]");
@@ -47,7 +50,26 @@ public class JavaProperties {
 				System.out.println(key + " = " + properties.get(key));
 			}
 		} else if (mode == Mode.AUTO || mode == Mode.GUI) {
+			try { System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Java Properties"); } catch (Exception e) {}
+			try { System.setProperty("apple.laf.useScreenMenuBar", "true"); } catch (Exception e) {}
 			try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch (Exception e) {}
+			
+			try {
+				Method getModule = Class.class.getMethod("getModule");
+				Object javaDesktop = getModule.invoke(Toolkit.getDefaultToolkit().getClass());
+				Object allUnnamed = getModule.invoke(JavaProperties.class);
+				Class<?> module = Class.forName("java.lang.Module");
+				Method addOpens = module.getMethod("addOpens", String.class, module);
+				addOpens.invoke(javaDesktop, "sun.awt.X11", allUnnamed);
+			} catch (Exception e) {}
+			
+			try {
+				Toolkit tk = Toolkit.getDefaultToolkit();
+				Field aacn = tk.getClass().getDeclaredField("awtAppClassName");
+				aacn.setAccessible(true);
+				aacn.set(tk, "Java Properties");
+			} catch (Exception e) {}
+			
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
